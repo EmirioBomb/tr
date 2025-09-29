@@ -16,7 +16,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./docs
+        working-directory: ./kira/docs
 
     steps:
       - uses: actions/checkout@v4
