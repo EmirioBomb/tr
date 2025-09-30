@@ -1,25 +1,21 @@
-name: auto-tagging
-
+# example 1: on push to master
+name: Bump version & Tagging
 on:
-    # 每当 push 到 main 分支时触发部署
-    # Deployment is triggered whenever a push is made to the main branch.
-    push:
-        branches: [main]
-    workflow_dispatch:
+  push:
+    branches:
+      - master
 
 jobs:
-    tagging:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Creating Tag
-              uses: anothrNick/github-tag-action@v1
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  tag-prefix: "v"
-                  release-branch: main
-                  default-branch: main
-                  create-annotated-tag: true
-                  tag-message: "chore(release): $TAG"
-                  commit-message: "chore(release): $TAG"
-                  push-branch: main
+  build:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: '0'
+
+    - name: Create Tagss
+      uses: anothrNick/github-tag-action@v1 # Don't use @master or @v1 unless you're happy to test the latest version
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # if you don't want to set write permissions use a PAT token
