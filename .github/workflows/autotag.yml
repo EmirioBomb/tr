@@ -1,38 +1,25 @@
-name: Deploy
+name: auto-tagging
 
 on:
+    # 每当 push 到 main 分支时触发部署
+    # Deployment is triggered whenever a push is made to the main branch.
     push:
-        tags:
-            - v[0-9]+.[0-9]+.[0-9]+
+        branches: [main]
+    workflow_dispatch:
 
 jobs:
-    deploy:
+    tagging:
         runs-on: ubuntu-latest
-
         steps:
-            - name: Checkout Code
-              uses: actions/checkout@v3
-
-            - name: Update CHANGELOG
-              id: changelog
-              uses: requarks/changelog-action@v1
+            - name: Creating Tag
+              uses: anothrNick/github-tag-action@v1.38.0
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
-                  token: ${{ github.token }}
-                  tag: ${{ github.ref_name }}
-
-            - name: Create Release
-              uses: ncipollo/release-action@v1.12.0
-              with:
-                  allowUpdates: true
-                  draft: false
-                  makeLatest: true
-                  name: ${{ github.ref_name }}
-                  body: ${{ steps.changelog.outputs.changes }}
-                  token: ${{ github.token }}
-
-            - name: Commit CHANGELOG.md
-              uses: stefanzweifel/git-auto-commit-action@v4
-              with:
-                  branch: main
-                  commit_message: "docs: update CHANGELOG.md for ${{ github.ref_name }} [skip ci]"
-                  file_pattern: CHANGELOG.md
+                  tag-prefix: "v"
+                  release-branch: main
+                  default-branch: main
+                  create-annotated-tag: true
+                  tag-message: "chore(release): $TAG"
+                  commit-message: "chore(release): $TAG"
+                  push-branch: main
