@@ -19,6 +19,6 @@ jobs:
       uses: anothrNick/github-tag-action@v1 # Don't use @master or @v1 unless you're happy to test the latest version
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # if you don't want to set write permissions use a PAT token
-        tag_prefix: '' # optional, default is 'v'
+        with_v: true
         release_branches: 'main' # optional, default is 'main'
         initial_version: '1.0.1' # optional, default is '0.1.0'
