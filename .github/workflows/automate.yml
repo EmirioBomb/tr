@@ -1,19 +1,26 @@
-name: full automation
+name: Generate Changelog
 
 on:
   push:
     branches:
-      - "main"
+      - main
+  workflow_dispatch:  # 可手动触发
 
 jobs:
-  pre-release:
-    name: "Pre Release"
-    runs-on: "ubuntu-latest"
-
+  changelog:
+    runs-on: ubuntu-latest
     steps:
-      - uses: "marvinpinto/action-automatic-releases@latest"
+      # 1. 获取仓库代码
+      - uses: actions/checkout@v4
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
-          prerelease: true
-          title: "测试发布"
+          fetch-depth: 0  # 需要完整 commit 历史
+
+      # 2. 生成 changelog
+      - name: Generate Changelog
+        id: changelog
+        uses: TriPSs/conventional-changelog-action@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          release-count: 0  # 从第一个 commit 开始生成
+          git-message: 'chore(release): {version}'
+          output-file: CHANGELOG.md
